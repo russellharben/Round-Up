@@ -73,7 +73,7 @@ var bodyParser = require('body-parser');
 var moment = require('moment');
 var plaid = require('plaid');
 
-var APP_PORT = envvar.number('APP_PORT', 8028);
+var APP_PORT = envvar.number('APP_PORT', 8029);
 var PLAID_CLIENT_ID = envvar.string('PLAID_CLIENT_ID', process.env.PLAID_CLIENT_ID);
 var PLAID_SECRET = envvar.string('PLAID_SECRET', process.env.PLAID_SECRET);
 var PLAID_PUBLIC_KEY = envvar.string('PLAID_PUBLIC_KEY', process.env.PLAID_PUBLIC_KEY);
@@ -86,7 +86,7 @@ var PLAID_PRODUCTS = envvar.string('PLAID_PRODUCTS', 'transactions');
 
 // We store the access_token in memory - in production, store it in a secure
 // persistent data store
-var ACCESS_TOKEN = "access-sandbox-f421fe60-ebff-4a26-8359-8f4f40a374a8";
+var ACCESS_TOKEN = 'access-sandbox-59d928d0-7966-4f42-aa1a-99d4cf07b3ea';
 var PUBLIC_TOKEN = null;
 var ITEM_ID = null;
 
@@ -157,7 +157,7 @@ app.get('/transactions', function(request, response, next) {
       });
     } else {
       console.log(transactionsResponse.transactions.length);
-      for (let i=0; i < transactionsResponse.transactions.length;i++){
+      for (let i = 0; i < transactionsResponse.transactions.length;i++){
        
         db.transactions.create({ 
           name: transactionsResponse.transactions[i].name,
@@ -165,7 +165,9 @@ app.get('/transactions', function(request, response, next) {
           transaction_id: transactionsResponse.transactions[i].transaction_id,
           date: transactionsResponse.transactions[i].date
         })
-          .then(response => console.log(response))
+          .then(response => {return response;})
+          .then(response2 => console.log(response2))
+
           .catch(err => console.log(err))
       }
       
@@ -376,6 +378,7 @@ var respondWithAssetReport = (
 
 app.post('/set_access_token', function(request, response, next) {
   ACCESS_TOKEN = request.body.access_token;
+  console.log(ACCESS_TOKEN)
   client.getItem(ACCESS_TOKEN, function(error, itemResponse) {
     response.json({
       item_id: itemResponse.item.item_id,
